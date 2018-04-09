@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Author HezhouW,hnqxwhz@163.com"><title>Python socket踩坑经历 · 在河的博客</title><meta name="description" content="Python socket 踩坑经历1. TCP/UDP在执行顺序上的区别
+
+
+协议
+服务端
+客户端
+
+
+
+
+TCP
+执行顺序：socket(), bind(), listen(), accept(),recv(),close()
+执行顺序： socket(), connect(）,send(),c"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">在河的博客</a></h3><div class="description"><p>偷得浮生半日闲</p></div></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>Python socket踩坑经历</a></h3></div><div class="post-content"><h1 id="Python-socket-踩坑经历"><a href="#Python-socket-踩坑经历" class="headerlink" title="Python socket 踩坑经历"></a>Python socket 踩坑经历</h1><h2 id="1-TCP-UDP在执行顺序上的区别"><a href="#1-TCP-UDP在执行顺序上的区别" class="headerlink" title="1. TCP/UDP在执行顺序上的区别"></a>1. TCP/UDP在执行顺序上的区别</h2><table>
+<thead>
+<tr>
+<th>协议</th>
+<th>服务端</th>
+<th>客户端</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCP</td>
+<td>执行顺序：socket(), bind(), listen(), accept(),recv(),close()</td>
+<td>执行顺序： socket(), connect(）,<strong>send()</strong>,close()</td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>执行顺序：socket(), bind(),<strong>recvfrom()</strong>,close()</td>
+<td>执行顺序:socket(),<strong>sendto()</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-TCP-socket监听地址的区别"><a href="#2-TCP-socket监听地址的区别" class="headerlink" title="2. TCP socket监听地址的区别"></a>2. TCP socket监听地址的区别</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">serversocket = socket.socket(</span><br><span class="line">    socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">serversocket.bind((socket.gethostname(), 80))</span><br><span class="line">serversocket.listen(5)</span><br></pre></td></tr></table></figure>
+<p><strong>监听地址有3种方式</strong></p>
+<ul>
+<li><strong>socket.gethostname() or 本机ipv4地址</strong>（preferd）： the socket would be visible to the outside world.</li>
+<li>‘localhost’ or ‘127.0.0.1’：只监听本机地址，需要注意的是，客户端和服务端的写法需要保持一致。</li>
+<li>s.bind((‘’, 80)) specifies that the socket is reachable by any address the machine happens to have.</li>
+</ul>
+<h2 id="3-TCP客户端断连接的情况："><a href="#3-TCP客户端断连接的情况：" class="headerlink" title="3. TCP客户端断连接的情况："></a>3. TCP客户端断连接的情况：</h2><ul>
+<li>当客户端主动发起client.close()操作：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">ser = socket.socket()</span><br><span class="line">ser.bind((&quot;&quot;,8080))</span><br><span class="line">ser.listen(2)</span><br><span class="line">while True:</span><br><span class="line">	conn, address = ser.accept()</span><br><span class="line">	data = conn.recv(1024)</span><br><span class="line">	print data</span><br></pre></td></tr></table></figure>
+<p>问题：服务端运行上述程序，客户端连接上后主动调用close()，会发现server开始刷屏。经过分析，发现程序在调用close()<br>会触发一次flush操作，如果恰巧缓存区为空，会触发一个内容为””的tcp包发送。<br>为了解决这种情况,data = server.recv()的后的方法要判断<strong>data!=””</strong></p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2018-04-08</span><i class="fa fa-tag"></i><a class="tag" href="/tags/python-socket/" title="python,socket">python,socket </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,https://HezhouW.github.io/2018/04/08/Python-socket踩坑经历/,在河的博客,Python socket踩坑经历,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2013/07/03/从E1-HDLC-IP层数据，提取流程中需要注意的问题/" title="从E1-&gt;HDLC-&gt;IP层数据，提取流程中需要注意的问题">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
