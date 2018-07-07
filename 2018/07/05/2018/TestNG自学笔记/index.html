@@ -1,14 +1,149 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Author HezhouW,hnqxwhz@163.com"><title>Java测试框架自学笔记 · 在河的博客</title><meta name="description" content="框架的选择
-测试对象：spring boot下搭建的各个业务
-测试目标：
-单元测试；
-spring框架下app的单元测试
-mock测试
-集成测试
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="框架的选择 测试对象：spring boot下搭建的各个业务 测试目标： 单元测试； spring框架下app的单元测试 mock测试 集成测试   可使用框架 单元测试的选择： TestNG or Junit4&amp;amp;5  两者都是比较好的测试框架，并且都已经集成在IDEA中，入手很简单。  我参考 http://www.importnew.com/16270.html 一文的结论，选择T">
+<meta name="keywords" content="测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java测试框架自学笔记">
+<meta property="og:url" content="https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/index.html">
+<meta property="og:site_name" content="在河的博客">
+<meta property="og:description" content="框架的选择 测试对象：spring boot下搭建的各个业务 测试目标： 单元测试； spring框架下app的单元测试 mock测试 集成测试   可使用框架 单元测试的选择： TestNG or Junit4&amp;amp;5  两者都是比较好的测试框架，并且都已经集成在IDEA中，入手很简单。  我参考 http://www.importnew.com/16270.html 一文的结论，选择T">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-07-07T04:36:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java测试框架自学笔记">
+<meta name="twitter:description" content="框架的选择 测试对象：spring boot下搭建的各个业务 测试目标： 单元测试； spring框架下app的单元测试 mock测试 集成测试   可使用框架 单元测试的选择： TestNG or Junit4&amp;amp;5  两者都是比较好的测试框架，并且都已经集成在IDEA中，入手很简单。  我参考 http://www.importnew.com/16270.html 一文的结论，选择T">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Java测试框架自学笔记</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/archives/">目录</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/06/27/2018/newposttest/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&text=Java测试框架自学笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&is_video=false&description=Java测试框架自学笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java测试框架自学笔记&body=Check out this article: https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&name=Java测试框架自学笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#框架的选择"><span class="toc-number">1.</span> <span class="toc-text">框架的选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TestNG"><span class="toc-number">2.</span> <span class="toc-text">TestNG</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#环境配置及demo记录"><span class="toc-number">2.1.</span> <span class="toc-text">环境配置及demo记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TestNG基本语法"><span class="toc-number">2.2.</span> <span class="toc-text">TestNG基本语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常用的使用场景"><span class="toc-number">2.3.</span> <span class="toc-text">常用的使用场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot下使用"><span class="toc-number">3.</span> <span class="toc-text">Spring Boot下使用</span></a></li></ol>
+    </div>
+  </span>
+</div>
 
 
-可使用框架
-单元测试的选择： TestNG or Junit4&amp;amp;5  两者都是比较好的测试框架，并且都已经集成在IDEA中，入手很简单。 "><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">在河的博客</a></h3><div class="description"><p>偷得浮生半日闲</p></div></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>Java测试框架自学笔记</a></h3></div><div class="post-content"><h1 id="框架的选择"><a href="#框架的选择" class="headerlink" title="框架的选择"></a>框架的选择</h1><ul>
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Java测试框架自学笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">在河的博客</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-07-05T07:23:00.000Z" itemprop="datePublished">2018-07-05</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/测试/">测试</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="框架的选择"><a href="#框架的选择" class="headerlink" title="框架的选择"></a>框架的选择</h3><ul>
 <li>测试对象：spring boot下搭建的各个业务</li>
 <li>测试目标：<ol>
 <li>单元测试；</li>
@@ -19,35 +154,103 @@ mock测试
 </li>
 <li>可使用框架<ul>
 <li>单元测试的选择： <em>TestNG</em> or <em>Junit4&amp;5</em><br>  两者都是比较好的测试框架，并且都已经集成在IDEA中，入手很简单。<br>  我参考 <a href="http://www.importnew.com/16270.html" target="_blank" rel="noopener">http://www.importnew.com/16270.html</a> 一文的结论，选择TestNG作为入门学习方向。</li>
-<li>Spring boot<br>  todo<br>| Header One     | Header Two     |<br>| :————- | :————- |<br>| Item One       | Item Two       |</li>
+<li>Spring boot<br>  todo</li>
 </ul>
 </li>
 </ul>
-<h2 id="TestNG"><a href="#TestNG" class="headerlink" title="TestNG"></a>TestNG</h2><h3 id="环境配置及demo记录"><a href="#环境配置及demo记录" class="headerlink" title="环境配置及demo记录"></a>环境配置及demo记录</h3><blockquote>
+<h3 id="TestNG"><a href="#TestNG" class="headerlink" title="TestNG"></a>TestNG</h3><h4 id="环境配置及demo记录"><a href="#环境配置及demo记录" class="headerlink" title="环境配置及demo记录"></a>环境配置及demo记录</h4><blockquote>
 <p>本人的使用环境：IDEA</p>
 </blockquote>
 <ol>
 <li>IDEA自带Testng<br> IDEA本身已经有TestNG插件，但是如果从未在IDEA中使用过TestNG是不会看到的，所以需要手动触发一次。<br> 方法：随便在你想测试的某个方法上，右击，选择goto，子列表里有个test，选择后会提示你创建test方法，在creat test界面中把lib设定成TestNG，<strong>记得点下fix</strong>，这时IDEA会自动下jar包并配置。</li>
-<li>TestNG使用初体验<br> 继续上步，creat test后会自动创建一个类，并声明好对应的方法。随意在方法里print点内容，右击选择runXXXtest即可。这个过程如果有提示某依赖缺失，自己ALT+ENTER按下缺的库即可~ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class TestTest &#123;</span><br><span class="line"></span><br><span class="line">	    @BeforeMethod</span><br><span class="line">	    public void tUp()&#123;</span><br><span class="line">	        Reporter.log(&quot;this is before&quot;);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    @AfterMethod</span><br><span class="line">	    public void tDown()&#123;</span><br><span class="line">	        Reporter.log(&quot;this is after&quot;);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    @Test(groups = &#123;&quot;normal&quot;&#125;)</span><br><span class="line">	    public void t() throws CloneNotSupportedException &#123;</span><br><span class="line">	        Reporter.log(&quot;1=&quot; + System.currentTimeMillis(), true);</span><br><span class="line">	        Assert.assertEquals(&quot;1&quot;, &quot;1&quot;);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    @Test(groups = &#123;&quot;abnoamal&quot;&#125;)</span><br><span class="line">	    public void t2()&#123;</span><br><span class="line">	        Reporter.log(&quot;2=&quot; + System.currentTimeMillis() ,true);</span><br><span class="line">	        Assert.assertNotEquals(&quot;33&quot;, &quot;33&quot;);</span><br><span class="line">	    &#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<li>TestNG使用初体验<br> 继续上步，creat test后会自动创建一个类，并声明好对应的方法。随意在方法里print点内容，右击选择runXXXtest即可。这个过程如果有提示某依赖缺失，自己ALT+ENTER按下缺的库即可~ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	    <span class="meta">@BeforeMethod</span></span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tUp</span><span class="params">()</span></span>&#123;</span><br><span class="line">	        Reporter.log(<span class="string">"this is before"</span>);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="meta">@AfterMethod</span></span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tDown</span><span class="params">()</span></span>&#123;</span><br><span class="line">	        Reporter.log(<span class="string">"this is after"</span>);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="meta">@Test</span>(groups = &#123;<span class="string">"normal"</span>&#125;)</span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">t</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">	        Reporter.log(<span class="string">"1="</span> + System.currentTimeMillis(), <span class="keyword">true</span>);</span><br><span class="line">	        Assert.assertEquals(<span class="string">"1"</span>, <span class="string">"1"</span>);</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="meta">@Test</span>(groups = &#123;<span class="string">"abnoamal"</span>&#125;)</span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">t2</span><span class="params">()</span></span>&#123;</span><br><span class="line">	        Reporter.log(<span class="string">"2="</span> + System.currentTimeMillis() ,<span class="keyword">true</span>);</span><br><span class="line">	        Assert.assertNotEquals(<span class="string">"33"</span>, <span class="string">"33"</span>);</span><br><span class="line">	    &#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>其他细节可参考 <a href="https://www.bigerhead.com/2016/07/290.html" target="_blank" rel="noopener">https://www.bigerhead.com/2016/07/290.html</a></p>
-<h3 id="TestNG基本语法"><a href="#TestNG基本语法" class="headerlink" title="TestNG基本语法"></a>TestNG基本语法</h3><ul>
-<li><p>常用注解</p>
-<p>  |注解|    描述|<br>  |–|–|<br>  |@BeforeSuite    |注解的方法将只运行一次，运行所有测试前此套件中。|<br>  @AfterSuite    |注解的方法将只运行一次此套件中的所有测试都运行之后。<br>  @BeforeClass    |注解的方法将只运行一次先行先试在当前类中的方法调用。<br>  @AfterClass    |注解的方法将只运行一次后已经运行在当前类中的所有测试方法。<br>  @BeforeTest    |注解的方法将被运行之前的任何测试方法属于内部类的 <test>标签的运行。<br>  @AfterTest    |注解的方法将被运行后，所有的测试方法，属于内部类的<test>标签的运行。<br>  @BeforeGroups    |组的列表，这种配置方法将之前运行。此方法是保证在运行属于任何这些组第一个测试方法，该方法被调用。<br>  @AfterGroups    |组的名单，这种配置方法后，将运行。此方法是保证运行后不久，最后的测试方法，该方法属于任何这些组被调用。<br>  @BeforeMethod    |注解的方法将每个测试方法之前运行。<br>  @AfterMethod    |被注释的方法将被运行后，每个测试方法。<br>  @DataProvider    |标志着一个方法，提供数据的一个测试方法。注解的方法必须返回一个Object[] []，其中每个对象[]的测试方法的参数列表中可以分配。该@Test 方法，希望从这个DataProvider的接收数据，需要使用一个dataProvider名称等于这个注解的名字。<br>  @Factory    |作为一个工厂，返回TestNG的测试类的对象将被用于标记的方法。该方法必须返回Object[]。<br>  @Listeners    |定义一个测试类的监听器。<br>  @Parameters    |介绍如何将参数传递给@Test方法。<br>  @Test    |<strong>标记一个类或方法作为测试的一部分。</strong></test></test></p>
-</li>
-<li>常用的断言<blockquote>
-</blockquote>
-  Assert.assertEquals() //相等<br>  Assert.assertNotEquals();//不相等<br>  Assert.assertSame();//同一个<br>  Assert.assertNotSame();//不是同一个<br>  Assert.assertNull();//为空<br>  Assert.assertNotNull();//不为空<br>  Assert.assertTrue();//断言参数为true</li>
+<h4 id="TestNG基本语法"><a href="#TestNG基本语法" class="headerlink" title="TestNG基本语法"></a>TestNG基本语法</h4><ul>
+<li>常用注解</li>
 </ul>
-<h3 id="常用的使用场景"><a href="#常用的使用场景" class="headerlink" title="常用的使用场景"></a>常用的使用场景</h3><ul>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@BeforeSuite</td>
+<td>注解的方法将只运行一次，运行所有测试前此套件中。</td>
+</tr>
+<tr>
+<td>@AfterSuite</td>
+<td>注解的方法将只运行一次此套件中的所有测试都运行之后</td>
+</tr>
+<tr>
+<td>@BeforeClass</td>
+<td>注解的方法将只运行一次先行先试在当前类中的方法调用</td>
+</tr>
+<tr>
+<td>@AfterClass</td>
+<td>注解的方法将只运行一次后已经运行在当前类中的所有测试方法</td>
+</tr>
+<tr>
+<td>@BeforeTest</td>
+<td>注解的方法将被运行之前的任何测试方法属于内部类的 <test>标签的运行</test></td>
+</tr>
+<tr>
+<td>@AfterTest</td>
+<td>注解的方法将被运行后，所有的测试方法，属于内部类的<test>标签的运行</test></td>
+</tr>
+<tr>
+<td>@BeforeGroups</td>
+<td>组的列表，这种配置方法将之前运行此方法是保证在运行属于任何这些组第一个测试方法，该方法被调用</td>
+</tr>
+<tr>
+<td>@AfterGroups</td>
+<td>组的名单，这种配置方法后，将运行此方法是保证运行后不久，最后的测试方法，该方法属于任何这些组被调用</td>
+</tr>
+<tr>
+<td>@BeforeMethod</td>
+<td>注解的方法将每个测试方法之前运行</td>
+</tr>
+<tr>
+<td>@AfterMethod</td>
+<td>被注释的方法将被运行后，每个测试方法</td>
+</tr>
+<tr>
+<td>@DataProvider</td>
+<td>标志着一个方法，提供数据的一个测试方法注解的方法必须返回一个Object[] []，其中每个对象[]的测试方法的参数列表中可以分配该@Test 方法，希望从这个DataProvider的接收数据，需要使用一个dataProvider名称等于这个注解的名字</td>
+</tr>
+<tr>
+<td>@Factory</td>
+<td>作为一个工厂，返回TestNG的测试类的对象将被用于标记的方法该方法必须返回Object[]</td>
+</tr>
+<tr>
+<td>@Listeners</td>
+<td>定义一个测试类的监听器</td>
+</tr>
+<tr>
+<td>@Parameters</td>
+<td>介绍如何将参数传递给@Test方法</td>
+</tr>
+<tr>
+<td>@Test</td>
+<td><strong>标记一个类或方法作为测试的一部分</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>常用的断言<br>  Assert.assertEquals() //相等<br>  Assert.assertNotEquals();//不相等<br>  Assert.assertSame();//同一个<br>  Assert.assertNotSame();//不是同一个<br>  Assert.assertNull();//为空<br>  Assert.assertNotNull();//不为空<br>  Assert.assertTrue();//断言参数为true</li>
+</ul>
+<h4 id="常用的使用场景"><a href="#常用的使用场景" class="headerlink" title="常用的使用场景"></a>常用的使用场景</h4><ul>
 <li><p>不同case之间不独立</p>
 <ul>
 <li><p>依赖：通过”dependsOnMethods”来声明</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void testSetA() &#123;</span><br><span class="line">	ps.setA();</span><br><span class="line">&#125;</span><br><span class="line">@Test(dependsOnMethods = &#123;&quot;testSetA&quot;&#125;)</span><br><span class="line">public void TestB()&#123;</span><br><span class="line">	Assert.assertEquals(ps.getA(),&quot;123&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSetA</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ps.setA();</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Test</span>(dependsOnMethods = &#123;<span class="string">"testSetA"</span>&#125;)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestB</span><span class="params">()</span></span>&#123;</span><br><span class="line">	Assert.assertEquals(ps.getA(),<span class="string">"123"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>优先级：priority = N可以控制执行优先级</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Test(priority=1)</span><br><span class="line">public void Test1() &#123;&#125;</span><br><span class="line"></span><br><span class="line">@Test(priority=2)</span><br><span class="line">public void Test2() &#123;&#125;</span><br><span class="line"></span><br><span class="line">@Test(priority=3)</span><br><span class="line">public void Test3() &#123;&#125;</span><br></pre></td></tr></table></figure>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span>(priority=<span class="number">1</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test1</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span>(priority=<span class="number">2</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test2</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span>(priority=<span class="number">3</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Test3</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>use priority will execute even if one test fails.</li>
 <li>需要注意的是它不保证依赖，previous可能未必执行完它也会触发下一个priority的内容，eg.test3 can start while test2 still runing。</li>
@@ -56,4 +259,106 @@ mock测试
 </ul>
 </li>
 </ul>
-</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2018-07-05</span><i class="fa fa-tag"></i></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/,在河的博客,Java测试框架自学笔记,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2018/06/27/2018/newposttest/" title="newposttest">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
+<h3 id="Spring-Boot下使用"><a href="#Spring-Boot下使用" class="headerlink" title="Spring Boot下使用"></a>Spring Boot下使用</h3><p>在Spring Boot项目里既可以使用Spring Boot Testing工具，也可以使用Spring Testing工具。 在Spring项目里，一般使用Spring Testing工具，虽然理论上也可以使用Spring Boot Testing，不过因为Spring Boot Testing工具会引入Spring Boot的一些特性比如AutoConfiguration，这可能会给你的测试带来一些奇怪的问题，所以一般不推荐这样做。</p>
+
+  </div>
+</article>
+
+
+
+
+<!-- 
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+ -->
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">目录</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#框架的选择"><span class="toc-number">1.</span> <span class="toc-text">框架的选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TestNG"><span class="toc-number">2.</span> <span class="toc-text">TestNG</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#环境配置及demo记录"><span class="toc-number">2.1.</span> <span class="toc-text">环境配置及demo记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TestNG基本语法"><span class="toc-number">2.2.</span> <span class="toc-text">TestNG基本语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常用的使用场景"><span class="toc-number">2.3.</span> <span class="toc-text">常用的使用场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot下使用"><span class="toc-number">3.</span> <span class="toc-text">Spring Boot下使用</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&text=Java测试框架自学笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&is_video=false&description=Java测试框架自学笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java测试框架自学笔记&body=Check out this article: https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&title=Java测试框架自学笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://HezhouW.github.io/2018/07/05/2018/TestNG自学笔记/&name=Java测试框架自学笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Author HezhouW,hnqxwhz@163.com
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">目录</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
