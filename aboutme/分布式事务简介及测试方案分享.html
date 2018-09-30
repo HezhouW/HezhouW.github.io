@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="想了解事务、分布式事务么？想知道框架式的服务该如何测试么？ 事务相关概念假设这样一个场景：小明要在淘宝购买夏天的衣服，他将商品放入购物车中，填写收获信息后提交订单后，即将付款。与此同时，淘宝卖家正在操作下架夏装上架秋装，老板希望系统将小明的单子判定为下单失败。果不其然，小明付款的时候收到了提示，付款失败。这个场景中，有多点要保证：    付款失败，小明的钱要正确的返还 即使订单生成，但确认商品发生">
+<meta property="og:type" content="website">
+<meta property="og:title" content="分布式事务简介及测试方案分享">
+<meta property="og:url" content="https://HezhouW.github.io/aboutme/分布式事务简介及测试方案分享.html">
+<meta property="og:site_name" content="在河的博客">
+<meta property="og:description" content="想了解事务、分布式事务么？想知道框架式的服务该如何测试么？ 事务相关概念假设这样一个场景：小明要在淘宝购买夏天的衣服，他将商品放入购物车中，填写收获信息后提交订单后，即将付款。与此同时，淘宝卖家正在操作下架夏装上架秋装，老板希望系统将小明的单子判定为下单失败。果不其然，小明付款的时候收到了提示，付款失败。这个场景中，有多点要保证：    付款失败，小明的钱要正确的返还 即使订单生成，但确认商品发生">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvllmv3i7fj30ny0budfv.jpg">
+<meta property="og:image" content="http://www.hollischuang.com/wp-content/uploads/2016/09/%E6%9C%AC%E5%9C%B0%E4%BA%8B%E5%8A%A1.png">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fvm38zfakmj31el0o1aao.jpg">
+<meta property="og:image" content="http://git.caimi-inc.com/middleware/transsonic/uploads/6dc81990ee092afa2d61928cca4cdf3b/chain-01.png">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNc79gy1fvpk3np2okj311q0l4753.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tNbRwgy1fvlxj1yqz9j31kw131773.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvm2au9wkdj31ew07qglz.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNbRwgy1fvm2vp8fiwj318q15gmya.jpg">
+<meta property="og:updated_time" content="2018-09-30T06:48:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式事务简介及测试方案分享">
+<meta name="twitter:description" content="想了解事务、分布式事务么？想知道框架式的服务该如何测试么？ 事务相关概念假设这样一个场景：小明要在淘宝购买夏天的衣服，他将商品放入购物车中，填写收获信息后提交订单后，即将付款。与此同时，淘宝卖家正在操作下架夏装上架秋装，老板希望系统将小明的单子判定为下单失败。果不其然，小明付款的时候收到了提示，付款失败。这个场景中，有多点要保证：    付款失败，小明的钱要正确的返还 即使订单生成，但确认商品发生">
+<meta name="twitter:image" content="https://ws4.sinaimg.cn/large/006tNbRwgy1fvllmv3i7fj30ny0budfv.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>分布式事务简介及测试方案分享</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3">
+    
+    <div class="content index my4">
+        
+          <header id="header">
+  <a href="/">
+  
+    
+      <div id="logo" style="background-image: url(/images/logo.png);"></div>
+    
+  
+    <div id="title">
+      <h1>在河的博客</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+       
+        <li><a href="/">首页</a></li>
+       
+        <li><a href="/about/">关于</a></li>
+       
+        <li><a href="/archives/">目录</a></li>
+      
+    </ul>
+  </div>
+</header>
+
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        分布式事务简介及测试方案分享
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">在河的博客</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-09-25T02:36:00.000Z" itemprop="datePublished">2018-09-25</time>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>想了解事务、分布式事务么？<br>想知道框架式的服务该如何测试么？</p>
+<h1 id="事务相关概念"><a href="#事务相关概念" class="headerlink" title="事务相关概念"></a>事务相关概念</h1><p>假设这样一个场景：<br>小明要在淘宝购买夏天的衣服，他将商品放入购物车中，填写收获信息后提交订单后，即将付款。与此同时，淘宝卖家正在操作下架夏装上架秋装，老板希望系统将小明的单子判定为下单失败。果不其然，小明付款的时候收到了提示，付款失败。<br>这个场景中，有多点要保证：  </p>
+<ol>
+<li>付款失败，小明的钱要正确的返还</li>
+<li>即使订单生成，但确认商品发生变更时，订单重新判定</li>
+<li>失败的订单信息，不能丢失</li>
+</ol>
+<p>这种处处存在并发服务，该如何保证数据的正确性呢？这就是我们的事务！</p>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务提供一种机制将一个活动涉及的所有操作纳入到一个不可分割的执行单元，组成事务的所有操作只有在所有操作均能正常执行的情况下方能提交，只要其中任一操作执行失败，都将导致整个事务的回滚。简单地说，事务提供一种“要么什么都不做，要么做全套（All or Nothing）”机制。  </p>
+<h2 id="本地事务"><a href="#本地事务" class="headerlink" title="本地事务"></a>本地事务</h2><p>一般来讲，小型且单一的服务提供方会将数据库和服务逻辑放在一台服务器上。这时，服务所实现的事务可被称为本地事务，通过使用本地事务型数据库来实现。如图所示。<br><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvllmv3i7fj30ny0budfv.jpg" alt=""><br>本地事务是非常常见的使用场景，JAVA提供多种框架支持事务性调用，典型的就是java.sql.Connection 中的 setAutoCommit、commit、rollback方法，感兴趣的同学可以自行了解下。<br><img src="http://www.hollischuang.com/wp-content/uploads/2016/09/%E6%9C%AC%E5%9C%B0%E4%BA%8B%E5%8A%A1.png" alt=""><br>本地事务实现起来非常简单，但是自有其缺陷：事务之间隔离的最小单位由资源管理器决定，如数据库中的一条记录，也就是说事务支持粒度仅仅为一次数据操作。在复杂的业务面前，该特性就无法满足了。<br>庞大的业务场景中，一个事务性服务往往涉及多个操作且操作的数据库表也各有不同，这个时候，这些操作中任意一个出现失败，整个链条的操作都要回滚。比如：在淘宝购买商品，消费者点击购买按钮后，交易后台会进行库存检查、下单、减库存、更新订单状态等一连串的服务调用，每一个操作对应一个独立的服务，每个服务一般会有独立的数据库。<br>为解决上述问题，可在本地事务的基础上再封一层（即全局事务）：每个操作独立拥有事务，操作分别提交，但全局监控各个操作的结果，如果任一失败，则回滚已做的所有操作。  </p>
+<h2 id="分布式事务-amp-Transsonic"><a href="#分布式事务-amp-Transsonic" class="headerlink" title="分布式事务 &amp; Transsonic"></a>分布式事务 &amp; Transsonic</h2><h3 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h3><p>对于电商这样用户众多的网站，会进行业务分离，购物中各个流程被拆分为更小粒度的服务（微服务），并且不同的服务被分配在不同的服务器上。这样，一个购物的流程，演变成了多次调用其他服务器提供的服务，如果这个购物流程出现异常，就需要回滚这些远端的服务。能够支持微服务架构下事务的方案，被称为“分布式事务”。<br>在实际分布式事务实践中，我们还需要考虑更多。首先，全局回滚必须能够保证远端业务的回滚操作正确完成；其次，在纯数据库层面上简单的数据回滚也不太适合，一个业务涉及众多子业务逻辑，数据层的回滚变得太过鲁莽（例如我们不可能因为支付失败而将订单删除），业务方需要更加灵活的回滚策略。这时，由服务方可自行定义的<strong>补偿机制</strong>是比较好的替代方式。<br>TC（TRY-CANCEL）或TCC（TRY-CONFIRM/CANCEL）目前已经业界广泛认可与采纳分布式事务解决方案，很多大公司（如支付宝）都有在使用。这里重点介绍下其中的一个解决方案：TC方案,该方案由框架统一管理Cancel操作，业务逻辑可以和回滚逻辑拆开，需要回滚时交由框架自行调用回滚逻辑。  </p>
+<blockquote>
+<p>Try 阶段：发起本地与远端调用，如果成功便立即提交。比如买东西，先把钱扣除，然后在去商品库存扣除，这个流程中每一步操作都是try。<br>Cancel 阶段：如果Try中出现异常，则执行用户定义的补偿逻辑。同样的在买东西这个场景中，如果用户付钱后商品扣除失败了，则会把钱返回给用户，但是我们依然可以保留了这次订单的记录。</p>
+</blockquote>
+<h3 id="Transsonic"><a href="#Transsonic" class="headerlink" title="Transsonic"></a>Transsonic</h3><p>因为我挖通常使用Dubbo/Kafka进行远端调用，中间件团队对TCC模式进行改造，使之适配Dubbo/Kafka的使用，该框架被命名为Transsonic框架。框架如下图所示<br><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvm38zfakmj31el0o1aao.jpg" alt=""><br>框架会记录每次事务的操作内容，对于正常的操作调用会在正常的生效，但其中任何一个调用出现错误时，框架会根据操作内容记录自动调用各远程接口的“补偿”方法，将之前生效的数据回滚掉，也就是说数据库内的数据在某个中间点是被成功写入过的。<br><img src="http://git.caimi-inc.com/middleware/transsonic/uploads/6dc81990ee092afa2d61928cca4cdf3b/chain-01.png" alt=""><br>如上所示，在一个典型的分布式调用中，涉及到的流程如下：</p>
+<ol>
+<li>本地应用作为整个事务的发起方调用远程服务A</li>
+<li>接着调用远程服务B，这里可以是Dubbo这样的同步RPC也可以是异步调用（如Kafka消息）</li>
+<li>远程服务B内部出现错误，回滚之，并发送补偿消息通知远程服务A执行补偿方法</li>
+<li>发送补偿消息通知本地应用执行补偿方法。</li>
+</ol>
+<p>Transsonic的用法非常简单，只需使用框架提供的注解即可：</p>
+<blockquote>
+<p>@SOATransactionBegin<br>    说明：用于事务的发起方法上<br>    参数：groupId，用于事务记录与查询</p>
+</blockquote>
+<blockquote>
+<p>@SOATransactionTry<br>    说明：用于被远程调用的方法上，参与分布式事务<br>    参数：cancelMethod，用于指定对应的补尝方法  </p>
+</blockquote>
+<blockquote>
+<p>@SOATransactionCancel<br>    说明：用于标注补尝方法</p>
+</blockquote>
+<p>限于篇幅，本文不再做过多介绍，有兴趣的同学可自行了解，<a href="http://pages.wacai.info/middleware/wafe/docs/plugins/transsonic/intro.html" target="_blank" rel="noopener">http://pages.wacai.info/middleware/wafe/docs/plugins/transsonic/intro.html</a></p>
+<h1 id="测试方案设计"><a href="#测试方案设计" class="headerlink" title="测试方案设计"></a>测试方案设计</h1><h2 id="中间件测试的特点"><a href="#中间件测试的特点" class="headerlink" title="中间件测试的特点"></a>中间件测试的特点</h2><p>概括来讲，业务测试关注功能正确性，框架测试更关注可用性！</p>
+<ul>
+<li>通常测试的业务逻辑，一定是有明确的设计预期的，输入和输出也有明确的范围，所以我们可以把有限的数据、操作作为变量进行变动，从而形成不同的用例。<br><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fvpk3np2okj311q0l4753.jpg" alt=""></li>
+<li>框架则大大不同，它提供的功能往往非常简单，但是框架往往是个底层实现，用户在上层的逻辑实现是不可控、无法完全预知的。为了保证功能可适用于“可能的使用场景”，开发会做很多很多工作，为了测试这些隐藏的部分，测试框架的时候就需要更侧重于构建用户使用场景，通过模拟来覆盖。</li>
+</ul>
+<p>简单总结了下框架测试中需要考量的点，如图所示。<br><img src="https://ws3.sinaimg.cn/large/006tNbRwgy1fvlxj1yqz9j31kw131773.jpg" alt=""></p>
+<h2 id="测试场景构建"><a href="#测试场景构建" class="headerlink" title="测试场景构建"></a>测试场景构建</h2><p>我们不可能事先想到用户所有的使用场景，但我们能够通过思考，覆盖足够多的场景并考量异常场景下最坏情况的解决方案，从而保证99%的场景符合使用预期，剩下的1%用户不会出问题。<br>构建用户可能的使用场景上，我的策略是<strong>先做减法再做加法</strong>。</p>
+<ul>
+<li>何为减法，减去什么？用户在使用框架时，有些场景是不符合框架设计初衷的，或者称之为“非法场景”。举例来讲，Transsonic框架是对Dubbo/Kafka调用的处理，那么使用http进行调用的业务就属于“非法场景”。“非法场景”用法是没有测试价值的，这部分的场景完全可通过一些手段拦截掉！常用的手段包括：制定使用规范、约定配置项、明确不可使用场景范围等方法。通过这样的方式，就把框架适用范围的边界描绘清晰明了，去掉“非法场景”，从而达到减少我们可能所需覆盖的用例数量。  </li>
+<li>所谓加法，就是在已明确使用范围内，不断扩充用例，从而提高覆盖率。如何高效的扩充这部分用例呢？我推荐的做法是“先深后广，先急后缓”。<br>先深后广，即先挖掘典型场景用户的使用场景，并深度挖掘这些场景下的细节点，然后再打开思维，加入那些非典型的使用方法。典型用户场景覆盖的用户最多，出现一个bug影响的用户也是最多的，对这部分深挖性价比最高。典型场景可以通过调研业务方当前的使用方式获得，也可以通过和开发进行沟通设计的定位进行预测。<br>先急后缓的策略是针对异常场景处理而言的。有部分异常我们可以提前预测到，还有一小部分预测不到。无论是哪种异常，都要思考一个问题”这个异常是否会造成严重后果“，如果答案是“Yes”，就属于“急”的问题，需要优先关注。通常的，紧急异常的构建是有套路的，通过刻意造成故障来反推。比如，Transsonic依赖于mysql数据库，最坏情况下就是数据库出现故障，反推开来有“数据库连接异常”、“数据库丢数据”、“数据库性能瓶颈”，再对数据库异常细分展开，可反推出有“网络超时”、“网络抖动”、“网络中断”、“连接数超出数据库连接池”等等。</li>
+</ul>
+<p><img src="https://ws4.sinaimg.cn/large/006tNbRwgy1fvm2au9wkdj31ew07qglz.jpg" alt=""></p>
+<h3 id="Transsonic测试实践"><a href="#Transsonic测试实践" class="headerlink" title="Transsonic测试实践"></a>Transsonic测试实践</h3><p>Transsonic框架使用上基于一个强使用约定：一个分布式事务，一定有且只有一个发起方法（类似于树的根节点），可能存在多个子事务，根事务及其事务一起构成一个整体。<br>依据这个约定，可预知的使用场景可能有串行式和并行式，串行式就是一个事务嵌套一个子事务、子事务在嵌套一个子事务，并行式指一个事务下同时存在多个子事务、子事务之间的关系是并列的。复杂一些，串行和并行可进行结合。当然，某些事务还会循环依赖，比如根事务下包括A和B两个实现，A调用B中的某个方法，B也调用了A中的某个方法。<br>整理来看，就有了下图<br><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fvm2vp8fiwj318q15gmya.jpg" alt=""></p>
+
+  </div>
+</article>
+
+
+
+
+<!-- 
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+ -->
+
+    </div>
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Author HezhouW,hnqxwhz@163.com
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">目录</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
